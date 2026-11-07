@@ -1,20 +1,55 @@
-/* UNO R4 Minima + ADXL335 analog outputs: X=A0, Y=A1, Z=A2.
-   Serial: 115200 baud. No external libraries.
+/* UNO R4 Minima + Grove ADXL335: X=A3, Y=A2, Z=A1.
+   Power: sensor VCC=3.3V, GND=GND. See README.
+   IMPORTANT: shield potentiometer signal must be physically isolated from A2.
+   Libraries: Adafruit GFX and Adafruit SSD1306 (install dependencies).
+   Serial: 115200 baud.
    Send a single character (newline/CR ignored):
    r=rest, g=good/full reps, p=partial reps, n=non-rep movements.
    Each label command STARTS A NEW TRIAL and starts streaming.
    s=stop. h=CSV header. m=manual marker (optional).
    Labels describe your test, NOT an automatic classification.
-   Raw ADC counts retain gravity; they are not calibrated g or angles.
+   Raw 12-bit ADC counts include gravity; not calibrated g or angles.
 */
 #include <Arduino.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
-const uint8_t X_PIN = A0, Y_PIN = A1, Z_PIN = A2;
+Adafruit_SSD1306 display(128, 64, &Wire, -1);
+bool oledReady = false;
+uint32_t lastPreviewMs = 0;
+const uint8_t X_PIN = A3, Y_PIN = A2, Z_PIN = A1;
 const uint32_t SAMPLE_US = 20000UL; // nominal 50 Hz
 bool recording = false;
 char label = 'r';
 uint32_t trial = 0, marker = 0, sequence = 0;
 uint32_t trialStartMs = 0, nextSampleUs = 0;
+
+// Refresh only while stopped, plus once before each trial starts.
+// A full OLED transfer can exceed a 20 ms sample interval.
+void drawScreen(bool active) {
+  if (!oledReady) return;
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
+  display.println("PBVR BASELINE LOGGER");
+  display.print(active ? "RECORDING " : "STOPPED   ");
+  display.print("trial "); display.println(trial);
+  display.print("Label: "); display.println(label);
+  if (active) {
+    display.println("CSV -> Serial Monitor");
+    display.println("Preview paused");
+    display.println("Send s to stop");
+  } else {
+    display.print("X A3: "); display.println(analogRead(X_PIN));
+    display.print("Y A2: "); display.println(analogRead(Y_PIN));
+    display.print("Z A1: "); display.println(analogRead(Z_PIN));
+    display.println("r rest g full p part");
+    display.println("n other | s stop");
+  }
+  display.display();
+}
 
 void printHeader() {
   Serial.println("trial,label,sample,t_ms,x_raw,y_raw,z_raw,marker");
@@ -22,30 +57,47 @@ void printHeader() {
 
 void setup() {
   Serial.begin(115200);
-  analogReadResolution(12); // R4: 0..4095
+  analogReadResolution(12); // UNO R4: 0..4095
   pinMode(X_PIN, INPUT);
   pinMode(Y_PIN, INPUT);
   pinMode(Z_PIN, INPUT);
+  Wire.begin();
+  Wire.beginTransmission(0x3C);
+  if (Wire.endTransmission() == 0) {
+    oledReady = display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  }
+  drawScreen(false); // Serial logging still works if no display is found.
   // No wait for Serial: send h after opening Serial Monitor for a header.
 }
 
 void loop() {
   while (Serial.available() > 0) {
     char c = (char)Serial.read();
+    if (c == '\r' || c == '\n' || c == ' ') continue;
     if (c == 'h') printHeader();
-    else if (c == 's') recording = false;
+    else if (c == 's') {
+      recording = false;
+      drawScreen(false);
+    }
     else if (c == 'm' && recording) ++marker;
     else if (c == 'r' || c == 'g' || c == 'p' || c == 'n') {
       label = c;
       ++trial;
       marker = 0;
       sequence = 0;
+      drawScreen(true); // Complete transfer BEFORE starting the sample clock.
       trialStartMs = millis();
       nextSampleUs = micros();
       recording = true;
     }
   }
-  if (!recording) return;
+  if (!recording) {
+    if (millis() - lastPreviewMs >= 200UL) {
+      lastPreviewMs = millis();
+      drawScreen(false);
+    }
+    return;
+  }
   uint32_t nowUs = micros();
   if ((int32_t)(nowUs - nextSampleUs) < 0) return;
   nextSampleUs += SAMPLE_US;

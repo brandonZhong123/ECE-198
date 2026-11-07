@@ -1,0 +1,5 @@
+# Local sensor recordings (keep test data out of source commits).
+RepBaselineLogger/captures/
+
+# Local document inspection output.
+tmp/
