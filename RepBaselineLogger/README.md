@@ -84,3 +84,11 @@ Validation: source reviewed for shield pin mapping, CSV consistency, and OLED re
 ## Direct CSV capture on Windows
 
 Close Arduino Serial Monitor and Plotter, leave the Arduino connected, then double-click Start-COM5-Logger.cmd. Wait for Ready. In that terminal press r/g/p/n to begin a labelled trial, s to stop, and q to finish. No Enter is needed. Files save automatically under captures/ and can be tracked in Git. The port defaults to COM5; to use another port run SaveReadings.ps1 with -PortName COM6 (or your port). The logger enables DTR for UNO R4 USB serial communication. If port access is denied, close other serial programs before retrying.
+
+## R3 / R4 board switch
+
+The sketch currently sets USE_R4_12_BIT to 0 for UNO R3 (10-bit, 0..1023). Change it to 1 for UNO R4 Minima (12-bit, 0..4095), and select the corresponding board in Arduino IDE. The R3 does not compile the R4-only analogReadResolution call when the switch is 0. Keep captures labelled by board and ADC resolution; existing R4 captures used 12-bit readings. Check the serial port after changing boards. Wiring remains X=A3, Y=A2, Z=A1, VCC=3.3V, GND=GND. R3 compilation and hardware operation have not been verified here.
+
+### Choose the logger port
+
+Double-click Start-COM5-Logger.cmd for COM5 or Start-COM6-Logger.cmd for COM6. Both use the same SaveReadings.ps1 and save to captures/. Use the launcher matching Tools > Port in Arduino IDE; the port is not tied to R3 or R4. Close Serial Monitor/Plotter before launching, and run only one logger per port. Commands are identical in both windows.

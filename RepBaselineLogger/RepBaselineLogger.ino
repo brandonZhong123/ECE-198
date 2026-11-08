@@ -1,4 +1,4 @@
-/* UNO R4 Minima + Grove ADXL335: X=A3, Y=A2, Z=A1.
+/* UNO R3 or R4 Minima + Grove ADXL335: X=A3, Y=A2, Z=A1.
    Power: sensor VCC=3.3V, GND=GND. See README.
    IMPORTANT: shield potentiometer signal must be physically isolated from A2.
    Libraries: Adafruit GFX and Adafruit SSD1306 (install dependencies).
@@ -8,12 +8,17 @@
    Each label command STARTS A NEW TRIAL and starts streaming.
    s=stop. h=CSV header. m=manual marker (optional).
    Labels describe your test, NOT an automatic classification.
-   Raw 12-bit ADC counts include gravity; not calibrated g or angles.
+   Raw ADC counts include gravity; not calibrated g or angles.
+   R3 mode: 10-bit (0..1023). R4 mode: 12-bit (0..4095).
 */
 #include <Arduino.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+
+// BOARD SWITCH: leave 0 for UNO R3. Change to 1 for UNO R4 Minima.
+// Also select the matching board in Arduino IDE before uploading.
+#define USE_R4_12_BIT 0
 
 Adafruit_SSD1306 display(128, 64, &Wire, -1);
 bool oledReady = false;
@@ -57,7 +62,10 @@ void printHeader() {
 
 void setup() {
   Serial.begin(115200);
-  analogReadResolution(12); // UNO R4: 0..4095
+#if USE_R4_12_BIT
+  analogReadResolution(12); // R4 only. Excluded from compilation in R3 mode.
+#endif
+  // With the switch OFF (0), both boards use default 10-bit readings.
   pinMode(X_PIN, INPUT);
   pinMode(Y_PIN, INPUT);
   pinMode(Z_PIN, INPUT);
