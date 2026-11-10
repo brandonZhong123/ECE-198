@@ -1,6 +1,6 @@
-/* UNO R3 or R4 Minima + Grove ADXL335: X=A3, Y=A2, Z=A1.
+/* UNO R3 or R4 Minima + Grove ADXL335: X=A0, Y=A1, Z=A3.
    Power: sensor VCC=3.3V, GND=GND. See README.
-   IMPORTANT: shield potentiometer signal must be physically isolated from A2.
+   A2 is reserved for the shield knob; do not connect an axis there.
    Libraries: Adafruit GFX and Adafruit SSD1306 (install dependencies).
    Serial: 115200 baud.
    Send a single character (newline/CR ignored):
@@ -18,12 +18,12 @@
 
 // BOARD SWITCH: leave 0 for UNO R3. Change to 1 for UNO R4 Minima.
 // Also select the matching board in Arduino IDE before uploading.
-#define USE_R4_12_BIT 0
+#define USE_R4_12_BIT 1
 
 Adafruit_SSD1306 display(128, 64, &Wire, -1);
 bool oledReady = false;
 uint32_t lastPreviewMs = 0;
-const uint8_t X_PIN = A3, Y_PIN = A2, Z_PIN = A1;
+const uint8_t X_PIN = A3, Y_PIN = A1, Z_PIN = A0;
 const uint32_t SAMPLE_US = 20000UL; // nominal 50 Hz
 bool recording = false;
 char label = 'r';
@@ -47,9 +47,9 @@ void drawScreen(bool active) {
     display.println("Preview paused");
     display.println("Send s to stop");
   } else {
-    display.print("X A3: "); display.println(analogRead(X_PIN));
-    display.print("Y A2: "); display.println(analogRead(Y_PIN));
-    display.print("Z A1: "); display.println(analogRead(Z_PIN));
+    display.print("X A0: "); display.println(analogRead(X_PIN));
+    display.print("Y A1: "); display.println(analogRead(Y_PIN));
+    display.print("Z A3: "); display.println(analogRead(Z_PIN));
     display.println("r rest g full p part");
     display.println("n other | s stop");
   }

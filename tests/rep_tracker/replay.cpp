@@ -1,6 +1,6 @@
 // Host-only validation: g++ -std=c++11 replay.cpp -o replay.exe
 // Run replay.exe <file.csv>. Firmware uses this same RepDetector.h.
-#include "RepDetector.h"
+#include "../../RepTracker/RepDetector.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>

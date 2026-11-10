@@ -12,7 +12,7 @@ The counted good recording contains excursions on X; the partial recording is mu
 
 ## Exact detector replay
 
-Compiled replay.cpp with g++ -std=c++11 -Wall -Wextra and ran built-in detector checks successfully. The replay shares RepDetector.h with the Arduino sketch. It downsamples to intervals of at least 50 ms, estimates a baseline from the first 2 seconds of each file, and uses a provisional full threshold of 15 counts.
+Compiled tests/rep_tracker/replay.cpp with g++ -std=c++11 -Wall -Wextra and ran built-in detector checks successfully. The replay shares RepDetector.h with the Arduino sketch. It downsamples to intervals of at least 50 ms, estimates a baseline from the first 2 seconds of each file, and uses a provisional full threshold of 15 counts.
 
 | Capture | Full events | Partial events | Rejected events |
 |---|---:|---:|---:|
@@ -23,3 +23,9 @@ Compiled replay.cpp with g++ -std=c++11 -Wall -Wextra and ran built-in detector 
 Rejected events include brief departures that return too quickly or movements failing to return within 10 seconds. These results do NOT validate a 10-rep counter or a full/partial classifier. Raising/lowering thresholds to force the observed labels would not establish generalization. Live teaching is required, followed by a fresh counted validation capture in a consistent mounting position.
 
 The prototype deliberately uses a 70%-of-teaching-median amplitude rule as an exploratory range proxy. It cannot determine clinical form correctness. Future validation must include full, partial, rest, and non-rep movements not used for teaching. Arduino compilation, actual sample timing, and screen operation have not been verified on hardware here.
+
+## November 9 update: confirmed 8-rep R4 capture
+
+The combined readings-20261109-204841-037.csv has 1035 rest samples over 20.68 seconds (trial 2) and 1761 good-rep samples over 35.20 seconds (trial 3). User confirmed 8 actual reps after a signal-based estimate of 8. The strongest repeated signal is now Y/A1; X contains rail-like outliers and is not used. Rest Y and initial good-trial Y differ, so stable placement remains important.
+
+The current YRepCounter.h, using median/EMA smoothing and dwell/hysteresis thresholds of 1400/1550 R4 counts, detects 0 rest reps and 8 good reps on host replay. Count times: 8.34, 12.36, 16.50, 20.10, 24.90, 27.96, 31.08, 35.10 seconds. This same recording informed threshold selection; it is not a held-out accuracy test. Full versus partial classification remains unvalidated. The current firmware is the simple counter; the teaching algorithm above is historical.

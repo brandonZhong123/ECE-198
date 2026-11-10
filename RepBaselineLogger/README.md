@@ -8,15 +8,15 @@ Target: Arduino UNO R4 Minima and Grove ADXL335 analog accelerometer. This logge
 |---|---|
 | VCC | 3.3V |
 | GND | GND |
-| X output | A3 |
-| Y output | A2 |
-| Z output | A1 |
+| X output | A0 |
+| Y output | A1 |
+| Z output | A3 |
 
 Use the sensor's printed labels, not wire colours or connector order. These are five connections. Access all three labelled axis outputs using pads/headers if the Grove cable does not expose them all. Leave AREF unconnected. No I2C connections or level converter are needed for these analog outputs. This sketch is for the ADXL335, not the MPU6050 or digital ADXL345.
 
 ## Lab OLED shield
 
-The supplied Workshop 4 lab specifies a pre-wired SSD1306 OLED, 128x64 pixels, I2C address 0x3C, reset -1, using SDA/SCL (A4/A5). The shield potentiometer is wired to A2. At your request the sketch uses X=A3, Y=A2, Z=A1 instead of the lab mapping. Before connecting sensor Y to A2, physically isolate the potentiometer's signal from A2 using a documented disconnect/jumper if available, or have lab staff help. Ignoring the knob in software does not disconnect it electrically. If you cannot isolate it, do not connect Y to A2 with this shield fitted. Move wires only with power disconnected.
+The supplied Workshop 4 lab specifies a pre-wired SSD1306 OLED, 128x64 pixels, I2C address 0x3C, reset -1, using SDA/SCL (A4/A5). The shield potentiometer is wired to A2. The sketch now uses X=A0, Y=A1, Z=A3, matching the lab wiring. Leave A2 for the knob; no accelerometer output should connect there. Move wires only with power disconnected.
 
 Disconnect USB before fitting the shield. Align all header pins with the corresponding Arduino sockets without offsetting a row. Follow the lab's rail setup: shield 3.3V to the positive breadboard rail and shield GND to the negative rail. Connect accelerometer VCC/GND to those rails. A3 is identified in the lab as an unlabelled connection just above A2; verify against the actual shield/header before connecting. The shield OLED is already wired and needs no additional display jumpers.
 
@@ -87,7 +87,7 @@ Close Arduino Serial Monitor and Plotter, leave the Arduino connected, then doub
 
 ## R3 / R4 board switch
 
-The sketch currently sets USE_R4_12_BIT to 0 for UNO R3 (10-bit, 0..1023). Change it to 1 for UNO R4 Minima (12-bit, 0..4095), and select the corresponding board in Arduino IDE. The R3 does not compile the R4-only analogReadResolution call when the switch is 0. Keep captures labelled by board and ADC resolution; existing R4 captures used 12-bit readings. Check the serial port after changing boards. Wiring remains X=A3, Y=A2, Z=A1, VCC=3.3V, GND=GND. R3 compilation and hardware operation have not been verified here.
+The sketch currently sets USE_R4_12_BIT to 0 for UNO R3 (10-bit, 0..1023). Change it to 1 for UNO R4 Minima (12-bit, 0..4095), and select the corresponding board in Arduino IDE. The R3 does not compile the R4-only analogReadResolution call when the switch is 0. Keep captures labelled by board and ADC resolution; existing R4 captures used 12-bit readings. Check the serial port after changing boards. Wiring remains X=A0, Y=A1, Z=A3, VCC=3.3V, GND=GND. R3 compilation and hardware operation have not been verified here.
 
 ### Choose the logger port
 
