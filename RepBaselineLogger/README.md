@@ -92,3 +92,9 @@ The sketch currently sets USE_R4_12_BIT to 0 for UNO R3 (10-bit, 0..1023). Chang
 ### Choose the logger port
 
 Double-click Start-COM5-Logger.cmd for COM5 or Start-COM6-Logger.cmd for COM6. Both use the same SaveReadings.ps1 and save to captures/. Use the launcher matching Tools > Port in Arduino IDE; the port is not tied to R3 or R4. Close Serial Monitor/Plotter before launching, and run only one logger per port. Commands are identical in both windows.
+
+## Direct CSV capture on macOS
+
+With Python 3 available, close Arduino Serial Monitor and Plotter, connect the board, and double-click **Start-Mac-Logger.command**. Wait for **Ready**. Press `r`, `g`, `p`, or `n` to start a trial, `s` to stop, and `q` to save and quit. No Enter is needed. Timestamped CSVs save automatically in `captures/`.
+
+The launcher selects a single detected USB serial port. If multiple ports are listed, open Terminal in this folder and pass the device shown under **Tools → Port**. For example, run `./Start-Mac-Logger.command /dev/cu.usbmodem1101`.
