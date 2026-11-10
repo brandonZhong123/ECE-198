@@ -46,8 +46,8 @@ void loop(){
  if(now-lastSample>=SAMPLE_MS){
   lastSample=now;
   if(counter.update(analogRead(Y_PIN)*ADC_SCALE,now)){
-   Serial.print(F("Reps: "));Serial.println(counter.reps);
+   Serial.print(F("Rep #: "));Serial.println(counter.reps);
   }
  }
- if(now-lastDraw>=200){lastDraw=now;drawCount();}
+ if(now-lastDraw>=200 ){lastDraw=now;drawCount();}
 }
