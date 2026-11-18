@@ -1,2 +1,9 @@
 # Local document inspection output.
 tmp/
+
+# Local presentation and coursework files.
+/ECE198_Progress_Presentation_Script.md
+/ECE198_script_updated_BW.pdf
+/presentation/PBVR_7_Minute_Script.md
+/output/
+.DS_Store
