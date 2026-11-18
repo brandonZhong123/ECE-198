@@ -23,7 +23,7 @@
 Adafruit_SSD1306 display(128, 64, &Wire, -1);
 bool oledReady = false;
 uint32_t lastPreviewMs = 0;
-const uint8_t X_PIN = A3, Y_PIN = A1, Z_PIN = A0;
+const uint8_t X_PIN = A0, Y_PIN = A2, Z_PIN = A3;
 const uint32_t SAMPLE_US = 20000UL; // nominal 50 Hz
 bool recording = false;
 char label = 'r';
